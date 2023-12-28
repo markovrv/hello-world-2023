@@ -67,7 +67,7 @@
                   {{ good.description }}
                 </b-card-text>
                 <h3>{{good.price}}</h3>
-                <b-button href="#" variant="primary">Купить</b-button> 
+                <b-button href="#" variant="primary" @click="bay(good.id)">Купить</b-button> 
               </b-card>
             </b-col>
           </b-row>
@@ -90,15 +90,33 @@ export default {
     text: ''
   }),
   methods: {
-    getAllGoods() {
-      fetch('https://fakestoreapi.com/products')
+    async getAllGoods() {
+      await fetch('/api/goods.php')
             .then(res=>res.json())
             .then(json=>{
               this.goods = json
             })
     },
+    async bay(id) {
+      let order = {
+        id: null,
+        good_id: id,
+        phone: prompt("Введите номер телефона", "Не помню...")
+      };
+
+      let response = await fetch('/api/orders.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(order)
+      });
+
+      let result = await response.json();
+      console.log(result);
+    },
     getAllCategories() {
-      fetch('https://fakestoreapi.com/products/categories')
+      fetch('/api/categories.php')
             .then(res=>res.json())
             .then(json=>{
               this.categories = json
